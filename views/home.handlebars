@@ -1,0 +1,30 @@
+<div class="container">
+    <h1>Discussion</h1>
+    <form class="comment-input" action="/" method="post">
+        <img src={{user.avatar}} title={{user.name.first}} />
+        <input type="text" value={{user.name.first}} name="firstname" hidden />
+        <input type="text" value={{user.name.last}} name="lastname" hidden />
+        <input type="text" value={{user.avatar}} name="avatar" hidden />
+        <input type="text" name="content" />
+        <button class="sub-button" type="submit">Commit</button>
+    </form>
+    <hr />
+    {{#each comments }}
+    <div class="comment-card">
+        <img src={{user.avatar}} width="30px" height="30" />
+        <div class="comment">
+            <p class="name"> {{user.name}} <span class="time">・ {{fromNow}}</span></p>
+            <p class="comment-text">{{content}}</p>
+            <form method="post" action="/like">
+                <input value={{_id}} name="id" hidden />
+                <input value={{user.name}} name="name" hidden />
+                <div class="buttons-row"><button class="upvote"><span class="uparrow">▲</span> Upvote <span
+                            class="likes">{{upvotes.length}}</span>
+                    </button>
+            </form> <a>Reply</a>
+        </div>
+    </div>
+</div>
+{{/each}}
+
+</div>
