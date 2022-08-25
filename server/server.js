@@ -1,13 +1,10 @@
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import { engine } from "express-handlebars";
 import expressWs from "express-ws";
-import {
-  getComments,
-  newComment,
-  updateComment,
-} from "./controller/comment.js";
+import { getComments, likeComment, newComment } from "./controller/comment.js";
 dotenv.config();
 
 const PORT = process.env.PORT || 3001;
@@ -17,6 +14,7 @@ const app = express();
 //* Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(cors());
 const wsInstance = expressWs(app);
 
 //* View Engine
@@ -39,7 +37,8 @@ app.use(express.static("public"));
 
 app.get("/", getComments);
 app.post("/", newComment);
-app.post("/like", updateComment);
+app.put("/", likeComment);
+app.post("/like", likeComment);
 
 app.ws("/like", (ws, req) => {
   ws.on("message", function incoming(message) {
