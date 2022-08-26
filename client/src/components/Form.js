@@ -1,67 +1,34 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { createComment } from "../actions/comments";
+import { useState } from "react";
 
 export default function Form({ handlePost, user }) {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    avatar: "",
-  });
+  const [formData, setFormData] = useState({});
 
   function handleSubmit(event) {
     event.preventDefault();
-    createComment(formData).then((data) => {
-      handlePost(event, data);
-    });
+    handlePost(event, formData);
+    setFormData((prevState) => ({ ...prevState, content: "" }));
   }
 
   function handleChange(event) {
     const { name, value, type, checked } = event.target;
-    setFormData((prevFormData) => {
+    setFormData(() => {
       return {
-        ...prevFormData,
+        ...user,
         [name]: type === "checkbox" ? checked : value,
       };
     });
   }
-
-  useEffect(() => {
-    setFormData(user);
-  }, []);
-
   return (
     <form onSubmit={handleSubmit} class="comment-input">
-      {formData.avata}
       <img
-        src={formData?.avatar}
-        title={formData?.firstName + " " + formData?.lastName}
+        src={user.avatar}
+        title={user.firstName + " " + user.lastName}
         alt="profile"
       />
       <input
         type="text"
-        value={formData?.first}
-        name="firstname"
-        onChange={handleChange}
-        hidden
-      />
-      <input
-        type="text"
-        value={formData?.last}
-        name="lastname"
-        onChange={handleChange}
-        hidden
-      />
-      <input
-        type="text"
-        value={formData?.avatar}
-        name="avatar"
-        onChange={handleChange}
-        hidden
-      />
-      <input
-        type="text"
         name="content"
+        value={formData.content}
         onChange={handleChange}
         placeholder="What are your thoughts?"
       />

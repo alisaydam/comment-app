@@ -4,10 +4,16 @@ import mongoose from "mongoose";
 import cors from "cors";
 import { engine } from "express-handlebars";
 import expressWs from "express-ws";
-import { getComments, likeComment, newComment } from "./controller/comment.js";
+import {
+  getComments,
+  likeComment,
+  newComment,
+  newSubComment,
+  likeSubComment,
+} from "./controller/comment.js";
 dotenv.config();
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 const app = express();
 
@@ -23,10 +29,10 @@ app.set("view engine", "handlebars");
 app.set("views", "./views");
 
 const uri = process.env.MONGO_URI;
-mongoose.connect(
-  "mongodb+srv://romisrealestate:djNtVHhdHsboLIGJ@cluster0.1hcrvej.mongodb.net/commentsdb?retryWrites=true&w=majority",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const connection = mongoose.connection;
 connection.once("open", () => {
@@ -37,12 +43,12 @@ app.use(express.static("public"));
 
 app.get("/", getComments);
 app.post("/", newComment);
+app.post("/sub", newSubComment);
 app.put("/", likeComment);
-app.post("/like", likeComment);
+app.patch("/", likeSubComment);
 
 app.ws("/like", (ws, req) => {
   ws.on("message", function incoming(message) {
-    console.log(message);
     ws.broadcast(message);
   });
 

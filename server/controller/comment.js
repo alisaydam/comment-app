@@ -1,9 +1,7 @@
 import Comment from "../models/Comment.js";
-import axios from "axios";
 import moment from "moment";
 
 export const getComments = async (req, res) => {
-  console.log("get data");
   try {
     const comments = await fetchComments();
     res.status(201).json(comments);
@@ -12,18 +10,30 @@ export const getComments = async (req, res) => {
   }
 };
 export const newComment = async (req, res) => {
-  console.log("post");
-  const { firstname, lastname, avatar, content } = req.body;
+  const { firstName, lastName, avatar, content } = req.body;
   try {
     await Comment.create({
       content,
       user: {
-        name: firstname + " " + lastname,
+        name: firstName + " " + lastName,
         avatar: avatar,
       },
     });
     const comments = await fetchComments();
     res.status(201).send(comments);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+};
+export const newSubComment = async (req, res) => {
+  const { subComments, _id } = req.body;
+  try {
+    await Comment.findByIdAndUpdate(_id, {
+      subComments: subComments,
+    });
+    const comment = await Comment.findById(_id).lean();
+    const subs = addFromNow(comment.subComments);
+    res.status(201).send(subs);
   } catch (err) {
     res.status(400).send(err);
   }
@@ -39,33 +49,33 @@ export const likeComment = async (req, res) => {
       comment.upvotes.push(name);
     }
     await Comment.create(comment);
-    res.status(201).send(comment);
-    res.redirect("/");
+    const comments = await fetchComments();
+    res.status(201).send(comments);
   } catch (err) {
     res.status(400).send(err);
   }
 };
-
-async function getANewUser() {
-  const {
-    name,
-    picture: { large },
-  } = await axios.get("https://randomuser.me/api/").then((data) => {
-    return data.data.results[0];
-  });
-
-  return {
-    name,
-    avatar: large,
-  };
-}
+export const likeSubComment = async (req, res) => {
+  delete req.body.fromNow;
+  try {
+    await Comment.findByIdAndUpdate(req.body._id, req.body);
+    const comments = await fetchComments();
+    res.status(201).send(comments);
+  } catch (err) {
+    (err);
+    res.status(400).send(err);
+  }
+};
 
 async function fetchComments() {
   const comments = await Comment.find().sort({ createdAt: -1 }).lean();
-  comments.forEach((x) => {
+  return addFromNow(comments);
+}
+
+function addFromNow(arr) {
+  arr.forEach((x) => {
     const fromNow = moment(x.createdAt).fromNow();
     return (x.fromNow = fromNow);
   });
-
-  return comments;
+  return arr;
 }

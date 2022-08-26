@@ -17,11 +17,30 @@ export const createComment = async (comment) => {
     console.log(error.message);
   }
 };
-
-export const likeComment = async (id) => {
+export const createSubComment = async (subComment) => {
   try {
-    const { data } = await api.like(id);
+    const data = await api.createSub(subComment);
+    return data;
   } catch (error) {
     console.log(error.message);
   }
 };
+
+export const likeComment = async (payload) => {
+  try {
+    const { data } = await api.like(payload);
+    return data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+export const likeSubComment = async (payload) => {
+  try {
+    const { data } = await api.likeSub(payload);
+    return data;
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+ 
