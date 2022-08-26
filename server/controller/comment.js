@@ -2,12 +2,12 @@ import Comment from "../models/Comment.js";
 import moment from "moment";
 
 export const getComments = async (req, res) => {
-  try {
-    const comments = await fetchComments();
-    res.status(201).json(comments);
-  } catch (err) {
-    res.status(400).json("Error" + err);
-  }
+   try {
+     const comments = await fetchComments();
+     res.status(201).json(comments);
+   } catch (err) {
+     res.status(400).json("Error" + err);
+   }
 };
 export const newComment = async (req, res) => {
   const { firstName, lastName, avatar, content } = req.body;

@@ -84,7 +84,7 @@ export default function Comment({ comment, user, like, likeSub }) {
         {subComments
           .map((sub, i) => {
             return (
-              <div class="comment-card">
+              <div class="comment-card" key={sub._id}>
                 <img
                   src={sub.user.avatar}
                   width="30px"

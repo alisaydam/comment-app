@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import http from "http";
 import cors from "cors";
 import { engine } from "express-handlebars";
-import expressWs from "express-ws";
 import {
   getComments,
   likeComment,
@@ -12,16 +12,17 @@ import {
   likeSubComment,
 } from "./controller/comment.js";
 dotenv.config();
+import { Server } from "socket.io";
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3001;
 
 const app = express();
+const server = http.createServer(app);
 
 //* Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(cors());
-const wsInstance = expressWs(app);
 
 //* View Engine
 app.engine("handlebars", engine());
@@ -47,18 +48,20 @@ app.post("/sub", newSubComment);
 app.put("/", likeComment);
 app.patch("/", likeSubComment);
 
-app.ws("/like", (ws, req) => {
-  ws.on("message", function incoming(message) {
-    ws.broadcast(message);
-  });
-
-  ws.broadcast = function broadcast(data) {
-    wsInstance.getWss().clients.forEach(function each(client) {
-      client.send(data);
-    });
-  };
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH"],
+  },
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+io.on("connection", (socket) => {
+  socket.on("send_message", (data) => {
+    console.log("meeasge");
+    io.emit("receive_message", data);
+  });
+});
+
+server.listen(PORT, () => {
+  console.log("SERVER RUNNING");
 });

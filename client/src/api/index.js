@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const url = "http://localhost:5000";
+// const url = "http://localhost:3001";
+const url = "https://realtime-commento.herokuapp.com";
 
 export const fetch = () => axios.get(url);
 export const create = (newComment) => axios.post(url, newComment);

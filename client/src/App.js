@@ -9,10 +9,14 @@ import Form from "./components/Form";
 import Comment from "./components/Comment";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import io from "socket.io-client";
+
+const socket = io.connect("https://realtime-commento.herokuapp.com/");
 
 function App() {
   const [user, setUser] = useState("");
   const [comments, setComments] = useState(0);
+
   useEffect(() => {
     getComments().then((res) => {
       setComments(res.data);
@@ -37,20 +41,18 @@ function App() {
     });
   }, []);
 
-  const sock = new WebSocket("ws://localhost:5000/like");
+  socket.on("receive_message", (data) => {
+    console.log("message");
 
-  sock.onopen = function () {
-    console.log("open");
-  };
-
-  sock.onmessage = function (e) {
-    const message = JSON.parse(e.data);
+    const message = JSON.parse(data);
     setComments(message.data);
-  };
+  });
 
-  function like(e, data) {
+  async function like(e, data) {
+    console.log("like");
     likeComment(data).then((data) => {
-      sock.send(JSON.stringify({ data }));
+      data.room = "comments";
+      socket.emit("send_message", JSON.stringify({ data }));
     });
   }
   function likeSub(e, data) {
@@ -69,7 +71,7 @@ function App() {
     comment.subComments = subs;
 
     likeSubComment(comment).then((data) => {
-      sock.send(JSON.stringify({ data }));
+      socket.emit("send_message", JSON.stringify({ data }));
     });
   }
 
