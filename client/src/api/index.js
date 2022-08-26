@@ -1,7 +1,10 @@
 import axios from "axios";
 
-// const url = "http://localhost:3001";
-const url = "https://realtime-commento.herokuapp.com";
+const url =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3001"
+    : "https://realtime-commento.herokuapp.com";
+console.log(url);
 
 export const fetch = () => axios.get(url);
 export const create = (newComment) => axios.post(url, newComment);

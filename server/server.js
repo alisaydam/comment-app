@@ -3,7 +3,6 @@ import express from "express";
 import mongoose from "mongoose";
 import http from "http";
 import cors from "cors";
-import { engine } from "express-handlebars";
 import {
   getComments,
   likeComment,
@@ -23,11 +22,6 @@ const server = http.createServer(app);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(cors());
-
-//* View Engine
-app.engine("handlebars", engine());
-app.set("view engine", "handlebars");
-app.set("views", "./views");
 
 const uri = process.env.MONGO_URI;
 mongoose.connect(uri, {
@@ -57,7 +51,6 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   socket.on("send_message", (data) => {
-    console.log("meeasge");
     io.emit("receive_message", data);
   });
 });

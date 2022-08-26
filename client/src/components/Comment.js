@@ -24,9 +24,12 @@ export default function Comment({ comment, user, like, likeSub }) {
         },
       ],
     };
-    createSubComment(subs).then((data) => {
-      setSubComments(data.data);
-    });
+    createSubComment(subs)
+      .then((data) => {
+        setSubComments(data.data);
+      })
+      .then(() => setShowSubForm(false));
+   
   }
 
   useEffect(() => {
