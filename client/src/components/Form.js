@@ -21,7 +21,8 @@ export default function Form({ handlePost, user }) {
   return (
     <form onSubmit={handleSubmit} class="comment-input">
       <img
-        src={user.avatar}
+        class={!user.avatar && "skeleton"}
+        src={user.avatar ? user.avatar : "placeholder.png"}
         title={user.firstName + " " + user.lastName}
         alt="profile"
       />
