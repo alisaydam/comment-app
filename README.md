@@ -1,10 +1,14 @@
 # Comment App
 
-`cd .\server\`
-`npm i`
-`node start`
+Note : In every refresh/reload, a new user will be loaded as if a new user signed in. 
 
-`cd .\client\`
-`npm i`
- `npm start`
 
+### Used Tech
+- Node
+- Express
+- socket.io
+- Mongodb
+- Heroku
+- React
+- Web sockets
+- GH pages
